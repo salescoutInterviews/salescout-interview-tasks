@@ -37,4 +37,4 @@ price-list
 src/test
 
 .env
-src/TEST_SCRIPTS
+src/__tests__
