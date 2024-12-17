@@ -38,3 +38,4 @@ src/test
 
 .env
 src/__tests__
+src/update-google-sheet.ts
