@@ -38,7 +38,7 @@ async function updateSheet(prNumber: string, status: string, duration: string, u
             userInfo.name || 'N/A',
             userInfo.bio || 'N/A',
             userInfo.email || 'N/A',
-            userInfo.tg || 'N/A',
+            userInfo.tg.length > 0 ? userInfo.tg.join(', ') : 'N/A',
         ],
     ];
 
