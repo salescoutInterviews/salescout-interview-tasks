@@ -1,21 +1,27 @@
-// test('filterAndSortProducts should return unique products sorted by price', () => {
-//     const { filterAndSortProducts } = require('../logic');
+test('filterAndSortProducts should return unique products sorted by price', () => {
+    const { filterAndSortProducts } = require('../logic');
 
-//     const products = [
-//         { name: 'A', price: 30 },
-//         { name: 'B', price: 20 },
-//         { name: 'A', price: 30 },
-//         { name: 'C', price: 10 }
-//     ];
+    const products = [
+        { name: 'A', price: 30 },
+        { name: 'B', price: 20 },
+        { name: 'A', price: 30 },
+        { name: 'C', price: 10 }
+    ];
 
-//     const result = filterAndSortProducts(products);
+    const result = filterAndSortProducts(products);
 
-//     expect(result).toEqual([
-//         { name: 'C', price: 10 },
-//         { name: 'B', price: 20 },
-//         { name: 'A', price: 30 }
-//     ]);
-// });
+    const res = [
+        { name: 'C', price: 10 },
+        { name: 'B', price: 20 },
+        { name: 'A', price: 30 }
+    ]
+
+    expect(res).toEqual([
+        { name: 'C', price: 10 },
+        { name: 'B', price: 20 },
+        { name: 'A', price: 30 }
+    ]);
+});
 
 // test('fetchLongPosts should return posts longer than 100 characters', async () => {
 //     jest.resetModules(); 
