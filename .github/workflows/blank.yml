@@ -31,9 +31,10 @@ jobs:
           echo "duration=$DURATION" >> $GITHUB_ENV
         continue-on-error: true
 
-      - name: Update Google Sheet
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_SHEET_CREDENTIALS }}
-        run: |
-          STATUS=$(cat status)
-          node update-google-sheet.js ${{ github.event.pull_request.number }} $STATUS ${{ env.duration }}
+      # - name: Update Google Sheet
+        # env:
+          # GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_SHEET_CREDENTIALS }}
+        # run: |
+          # STATUS=$(cat status)
+          # USERNAME=${{ github.event.pull_request.user.login }}
+          # node update-info.js ${{ github.event.pull_request.number }} $STATUS ${{ env.duration }} $USERNAME
