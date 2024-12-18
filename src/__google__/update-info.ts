@@ -21,7 +21,7 @@ async function updateSheet(prNumber: string, status: string, duration: string, u
     const sheets: sheets_v4.Sheets = google.sheets({ version: 'v4', auth });
 
     const spreadsheetId = '1MpbbyrRWijeyqVMm3ZFxcZIzgxr0SzA-E3dXyP4VCLo';
-    const range = 'Sheet1!A:F'; // Добавьте новые колонки для имени, bio и email
+    const range = 'Candidates!A:F'; // Добавьте новые колонки для имени, bio и email
 
     const values = [
         [
