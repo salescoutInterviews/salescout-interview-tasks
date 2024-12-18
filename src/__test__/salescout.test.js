@@ -10,11 +10,11 @@ test('filterAndSortProducts should return unique products sorted by price', () =
 
     const result = filterAndSortProducts(products);
 
-    const expectedd = [
+    const expected = [
         { name: 'C', price: 10 },
         { name: 'B', price: 20 },
         { name: 'A', price: 30 }
     ];
 
-    expect(expectedd).toEqual(expected);
+    expect(result).toEqual(expected);
 });
