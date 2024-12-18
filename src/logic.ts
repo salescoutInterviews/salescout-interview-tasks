@@ -7,7 +7,7 @@ type Product = {
 
 function filterAndSortProducts(products: Product[]): Product[] {
     // Your code goes here
-    return []
+    return [] 
 }
 
 module.exports = { filterAndSortProducts }

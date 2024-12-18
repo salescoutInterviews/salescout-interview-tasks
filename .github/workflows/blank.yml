@@ -20,6 +20,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Compile TypeScript
+         run: npx tsc
+ 
       - name: Run Tests
         id: test
         run: |
@@ -37,4 +40,4 @@ jobs:
         run: |
           STATUS=$(cat status)
           USERNAME=${{ github.event.pull_request.user.login }}
-          node update-info.js ${{ github.event.pull_request.number }} $STATUS ${{ env.duration }} $USERNAME
+          node build/src/__google__/update-info.js ${{ github.event.pull_request.number }} $STATUS ${{ env.duration }} $USERNAME

@@ -17,5 +17,5 @@
         "skipLibCheck": false,
         "jsx": "react",
     },
-    "include": ["src/**/*", "__tests__/**/*", "update-info.ts"]
+    "include": ["src/**/*", "__tests__/**/*"]
 }
