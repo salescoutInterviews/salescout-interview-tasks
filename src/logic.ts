@@ -4,7 +4,7 @@ type Product = {
     name: string;
     price: number;
 };
-
+ 
 function filterAndSortProducts(products: Product[]): Product[] {
     // Your code goes here
     return [] 
