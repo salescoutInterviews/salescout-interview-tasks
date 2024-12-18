@@ -1,18 +1,18 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
-  preset: 'ts-jest',
+  preset: 'ts-jest/presets/default-esm', // Используем ESM пресет для ES-модулей
   testEnvironment: 'node',
   collectCoverage: true,
   coverageDirectory: "coverage",
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   transform: {
-    '^.+\\.tsx?$': 'ts-jest', // Для TypeScript файлов
-    '^.+\\.js$': 'babel-jest', // Для JavaScript файлов
+    '^.+\\.tsx?$': [
+      'ts-jest', // Указываем трансформер
+      {
+        useESM: true, // Настройка для ES-модулей
+      },
+    ],
+    '^.+\\.js$': 'babel-jest', // Для JavaScript файлов (ES-модули)
   },
   roots: ['<rootDir>/src'],
-  globals: {
-    'ts-jest': {
-      useESM: true, // Включаем поддержку ES-модулей в ts-jest
-    },
-  },
 };
