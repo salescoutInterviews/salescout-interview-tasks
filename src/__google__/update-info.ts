@@ -21,7 +21,7 @@ async function updateSheet(prNumber: string, status: string, duration: string, u
     const sheets: sheets_v4.Sheets = google.sheets({ version: 'v4', auth });
 
     const spreadsheetId = '1MpbbyrRWijeyqVMm3ZFxcZIzgxr0SzA-E3dXyP4VCLo';
-    const range = 'Candidates!A:F'; // Добавьте новые колонки для имени, bio и email
+    const range = 'Candidates!A:F';
 
     const values = [
         [
@@ -48,10 +48,8 @@ async function updateSheet(prNumber: string, status: string, duration: string, u
     }
 }
 
-// Получаем аргументы командной строки
 const [,, prNumber, status, duration, username] = process.argv;
 
-// Вызываем функции
 getGithubUserInfo(username)
     .then(userInfo => updateSheet(prNumber, status, duration, userInfo))
     .catch(err => console.error('Error:', err));
