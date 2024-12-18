@@ -37,7 +37,7 @@ jobs:
 
       - name: Update Google Sheet
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_SHEET_CREDENTIALS }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         run: |
           STATUS=$(cat status)
           USERNAME=${{ github.event.pull_request.user.login }}
