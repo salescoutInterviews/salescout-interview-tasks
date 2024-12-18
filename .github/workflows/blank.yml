@@ -37,4 +37,4 @@ jobs:
         run: |
           STATUS=$(cat status)
           USERNAME=${{ github.event.pull_request.user.login }}
-          node update-info.js ${{ github.event.pull_request.number }} $STATUS ${{ env.duration }} $USERNAME
+          npx ts-node update-info.ts ${{ github.event.pull_request.number }} $STATUS ${{ env.duration }} $USERNAME
