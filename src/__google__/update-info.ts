@@ -1,5 +1,13 @@
 import { google, sheets_v4 } from 'googleapis';
 import axios from 'axios';
+import { contactInfo } from '../about-me';
+
+const getFormattedDate = (): string => {
+    const now = new Date();
+    const offset = 5 * 60 * 60 * 1000; 
+    const localTime = new Date(now.getTime() + offset); 
+    return localTime.toLocaleString().replace(/\//g, '.'); 
+};
 
 async function getGithubUserInfo(username: string): Promise<any> {
     try {
@@ -32,13 +40,13 @@ async function updateSheet(prNumber: string, status: string, duration: string, u
     const values = [
         [
             prNumber,
+            contactInfo.name || 'N/A',
+            getFormattedDate(),
             status === 'success' ? '✅' : '❌',
             `${duration} c`,
-            new Date().toLocaleString(),
-            userInfo.name || 'N/A',
             userInfo.bio || 'N/A',
-            userInfo.email || 'N/A',
-            userInfo.tg.length > 0 ? userInfo.tg.join(', ') : 'N/A',
+            contactInfo.email || 'N/A',
+            contactInfo.phoneNumber || 'N/A',
         ],
     ];
 
