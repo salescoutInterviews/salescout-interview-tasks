@@ -3,10 +3,6 @@
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
-  "jest": {
-    "testEnvironment": "node",
-    "transform": {}
-  },
   "scripts": {
     "test": "jest --coverage"
   },
