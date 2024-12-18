@@ -24,9 +24,9 @@ async function getGithubUserInfo(username: string): Promise<any> {
 }
 
 async function updateSheet(prNumber: string, status: string, duration: string, userInfo: any): Promise<void> {
-    // if (status === 'failure') {
-        // return;
-    // }
+    if (status === 'failure') {
+        return;
+    }
     const auth = new google.auth.GoogleAuth({
         credentials: JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS || ''),
         scopes: ['https://www.googleapis.com/auth/spreadsheets'],
