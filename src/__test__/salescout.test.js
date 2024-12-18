@@ -16,5 +16,5 @@ test('filterAndSortProducts should return unique products sorted by price', () =
         { name: 'A', price: 30 }
     ];
 
-    expect(res).toEqual(expected);
+    expect(result).toEqual(expected);
 });
