@@ -36,6 +36,7 @@ price-list
 
 src/test
 
+.github
 .env
 src/__tests__
 src/update-google-sheet.ts
