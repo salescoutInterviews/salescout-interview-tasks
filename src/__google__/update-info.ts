@@ -1,6 +1,6 @@
 import { google, sheets_v4 } from 'googleapis';
 import axios from 'axios';
-import { contactInfo } from '../about-me';
+import { contactInfo } from '../about-me.js';
 
 const getFormattedDate = (): string => {
     const now = new Date();
@@ -44,7 +44,7 @@ async function updateSheet(prNumber: string, status: string, duration: string, u
             getFormattedDate(),
             status === 'success' ? '✅' : '❌',
             `${duration} c`,
-            userInfo.bio || 'N/A',
+            contactInfo.bio || 'N/A',
             contactInfo.email || 'N/A',
             contactInfo.phoneNumber || 'N/A',
         ],
