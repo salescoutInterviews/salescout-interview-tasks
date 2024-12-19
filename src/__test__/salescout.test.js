@@ -1,4 +1,45 @@
 import { filterAndSortProducts } from '../logic';
+import axios from 'axios';
+jest.mock('axios');
+import { fetchLongPosts } from '../work-with-api';
+import mongoose from 'mongoose';
+jest.mock('mongoose', () => ({
+    model: jest.fn().mockReturnValue({
+        create: jest.fn(),
+        aggregate: jest.fn().mockResolvedValue([{ email: 'duplicate@example.com' }])
+    }),
+    connect: jest.fn(),
+    disconnect: jest.fn() // Добавляем мок для disconnect
+}));
+import { manageUsers } from '../work-with-mongodb';
+import request from 'supertest';
+import app from '../users-api';
+import { fetchAll } from '../asynchonus-development';
+jest.mock('redis', () => {
+    const redisMock = require('redis-mock');
+    return redisMock;
+});
+import { manageRedis } from '../work-with-redis';
+import redis from 'redis';
+
+afterEach(() => {
+    jest.restoreAllMocks();
+    jest.clearAllMocks();
+});
+
+afterAll(async () => {
+    // Закрытие соединения с MongoDB
+    await mongoose.disconnect();
+
+    // Закрытие Redis
+    const mockRedisClient = redis.createClient();
+    mockRedisClient.quit();
+
+    // Закрытие сервера Express, если требуется
+    if (typeof app.close === 'function') {
+        await app.close();
+    }
+});
 
 test('filterAndSortProducts should return unique products sorted by price', () => {
     const products = [
@@ -19,10 +60,6 @@ test('filterAndSortProducts should return unique products sorted by price', () =
     expect(result).toEqual(expected);
 });
 
-import axios from 'axios';
-jest.mock('axios');
-import { fetchLongPosts } from '../work-with-api';
-
 test('fetchLongPosts should return posts longer than 100 characters', async () => {
     axios.get.mockResolvedValue({
         data: [
@@ -38,23 +75,10 @@ test('fetchLongPosts should return posts longer than 100 characters', async () =
     ]);
 });
 
-import mongoose from 'mongoose';
-jest.mock('mongoose', () => ({
-    model: jest.fn().mockReturnValue({
-        create: jest.fn(),
-        aggregate: jest.fn().mockResolvedValue([{ email: 'duplicate@example.com' }])
-    }),
-    connect: jest.fn()
-}));
-import { manageUsers } from '../work-with-mongodb';
-
 test('manageUsers should find users with duplicate emails', async () => {
     const result = await manageUsers();
     expect(result).toEqual([{ email: 'duplicate@example.com' }]);
 });
-
-import request from 'supertest';
-import app from '../users-api';
 
 test('POST /user and GET /users should work correctly', async () => {
     await request(app).post('/user').send({ name: 'John' }).expect(200);
@@ -62,8 +86,6 @@ test('POST /user and GET /users should work correctly', async () => {
 
     expect(response.body).toEqual([{ name: 'John' }]);
 });
-
-import { fetchAll } from '../asynchonus-development';
 
 test('fetchAll should fetch data from multiple URLs in parallel', async () => {
     axios.get.mockResolvedValueOnce({ data: 'Result 1', status: 200 });
@@ -78,13 +100,6 @@ test('fetchAll should fetch data from multiple URLs in parallel', async () => {
     ]);
 });
 
-jest.mock('redis', () => {
-    const redisMock = require('redis-mock');
-    return redisMock;
-});
-import { manageRedis } from '../work-with-redis';
-import redis from 'redis';
-
 test('manageRedis should save and retrieve keys', async () => {
     const mockRedisClient = redis.createClient();
 
@@ -95,4 +110,6 @@ test('manageRedis should save and retrieve keys', async () => {
 
     expect(mockRedisClient.set).toHaveBeenCalledWith('key', 'value', expect.any(Function));
     expect(mockRedisClient.get).toHaveBeenCalledWith('key', expect.any(Function));
+
+    mockRedisClient.quit(); // Закрываем соединение Redis
 });
