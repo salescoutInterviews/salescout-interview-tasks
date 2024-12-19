@@ -22,22 +22,25 @@ jest.mock('redis', () => {
 import { manageRedis } from '../work-with-redis';
 import redis from 'redis';
 
+let server; // Переменная для хранения запущенного сервера
+
+beforeAll(() => {
+    server = app.listen(4000); // Запускаем сервер на тестовом порту
+});
+
 afterEach(() => {
     jest.restoreAllMocks();
     jest.clearAllMocks();
 });
 
 afterAll(async () => {
-    // Закрытие соединения с MongoDB
-    await mongoose.disconnect();
+    await mongoose.disconnect(); // Закрываем соединение с MongoDB
 
-    // Закрытие Redis
     const mockRedisClient = redis.createClient();
-    mockRedisClient.quit();
+    mockRedisClient.quit(); // Закрываем соединение Redis
 
-    // Закрытие сервера Express, если требуется
-    if (typeof app.close === 'function') {
-        await app.close();
+    if (server) {
+        server.close(); // Закрываем сервер Express
     }
 });
 
@@ -81,10 +84,17 @@ test('manageUsers should find users with duplicate emails', async () => {
 });
 
 test('POST /user and GET /users should work correctly', async () => {
-    await request(app).post('/user').send({ name: 'John' }).expect(200);
-    const response = await request(app).get('/users').expect(200);
+    await request(server).post('/user').send({ name: 'John' }).expect(200);
+
+    const response = await request(server).get('/users').expect(200);
 
     expect(response.body).toEqual([{ name: 'John' }]);
+});
+
+test('POST /user should return 400 if no name is provided', async () => {
+    const response = await request(server).post('/user').send({}).expect(400);
+
+    expect(response.body).toEqual({ error: 'Name is required' });
 });
 
 test('fetchAll should fetch data from multiple URLs in parallel', async () => {
@@ -111,5 +121,5 @@ test('manageRedis should save and retrieve keys', async () => {
     expect(mockRedisClient.set).toHaveBeenCalledWith('key', 'value', expect.any(Function));
     expect(mockRedisClient.get).toHaveBeenCalledWith('key', expect.any(Function));
 
-    mockRedisClient.quit(); // Закрываем соединение Redis
+    mockRedisClient.quit();
 });
