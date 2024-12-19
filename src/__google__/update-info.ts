@@ -24,9 +24,9 @@ async function getGithubUserInfo(username: string): Promise<any> {
 }
 
 async function updateSheet(prNumber: string, status: string, duration: string, userInfo: any): Promise<void> {
-    if (status === 'failure') {
-        return;
-    }
+    // if (status === 'failure' || contactInfo.bio.length < 50) {
+        // return;
+    // }
     const auth = new google.auth.GoogleAuth({
         credentials: JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS || ''),
         scopes: ['https://www.googleapis.com/auth/spreadsheets'],
@@ -58,6 +58,26 @@ async function updateSheet(prNumber: string, status: string, duration: string, u
             requestBody: { values },
         });
         console.log('Google Sheet updated successfully!');
+
+        try {
+            let cleanNumber = contactInfo.phoneNumber.replace(/\D/g, '');
+            if (cleanNumber.startsWith('8')) {
+                cleanNumber = cleanNumber.slice(1);
+            } else if (cleanNumber.startsWith('7') && cleanNumber.length === 11) {
+                cleanNumber = cleanNumber.slice(1);
+            }
+            if (cleanNumber.length === 10) {
+                cleanNumber = '7' + cleanNumber;
+            }
+
+            const body = {
+                name: contactInfo.name,
+                number: cleanNumber
+            }
+            await axios.post('https://whatsapp.salescout.me/api/whatsapp/send-interview-invite', body);
+        } catch (error){
+
+        }
     } catch (error) {
         console.error('Failed to update Google Sheet:', error);
     }
