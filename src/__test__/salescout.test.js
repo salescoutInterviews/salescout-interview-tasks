@@ -25,7 +25,7 @@ import redis from 'redis';
 let server; // Переменная для хранения запущенного сервера
 
 beforeAll(() => {
-    server = app.listen(4000); // Запускаем сервер на тестовом порту
+    server = app.listen(3000); // Запускаем сервер на тестовом порту
 });
 
 afterEach(() => {
