@@ -15,4 +15,5 @@ module.exports = {
     '^.+\\.js$': 'babel-jest', // Для JavaScript файлов (ES-модули)
   },
   roots: ['<rootDir>/src'],
+  setupFilesAfterEnv: ['<rootDir>/setupTests.js'], // Файл с дополнительной настройкой
 };

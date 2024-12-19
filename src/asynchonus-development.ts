@@ -17,17 +17,8 @@ type RequestsResult = {
 }
 
 async function fetchAll(urls: string[]): Promise<RequestsResult[]> {
-    const fetchPromises = urls.map(async (url) => {
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            return { data, status: response.status };
-        } catch (error) {
-            return { data: null, status: 500 };
-        }
-    });
-
-    return Promise.all(fetchPromises);
+    //Your code goes here
+    return [];
 }
 
 module.exports = { fetchAll };

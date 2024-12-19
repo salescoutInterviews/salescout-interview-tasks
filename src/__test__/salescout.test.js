@@ -1,4 +1,48 @@
 import { filterAndSortProducts } from '../logic';
+import axios from 'axios';
+jest.mock('axios');
+import { fetchLongPosts } from '../work-with-api';
+import mongoose from 'mongoose';
+jest.mock('mongoose', () => ({
+    model: jest.fn().mockReturnValue({
+        create: jest.fn(),
+        aggregate: jest.fn().mockResolvedValue([{ email: 'duplicate@example.com' }])
+    }),
+    connect: jest.fn(),
+    disconnect: jest.fn() // Добавляем мок для disconnect
+}));
+import { manageUsers } from '../work-with-mongodb';
+import request from 'supertest';
+import app from '../users-api';
+import { fetchAll } from '../asynchonus-development';
+jest.mock('redis', () => {
+    const redisMock = require('redis-mock');
+    return redisMock;
+});
+import { manageRedis } from '../work-with-redis';
+import redis from 'redis';
+
+let server; // Переменная для хранения запущенного сервера
+
+beforeAll(() => {
+    server = app.listen(4000); // Запускаем сервер на тестовом порту
+});
+
+afterEach(() => {
+    jest.restoreAllMocks();
+    jest.clearAllMocks();
+});
+
+afterAll(async () => {
+    await mongoose.disconnect(); // Закрываем соединение с MongoDB
+
+    const mockRedisClient = redis.createClient();
+    mockRedisClient.quit(); // Закрываем соединение Redis
+
+    if (server) {
+        server.close(); // Закрываем сервер Express
+    }
+});
 
 test('filterAndSortProducts should return unique products sorted by price', () => {
     const products = [
@@ -19,10 +63,6 @@ test('filterAndSortProducts should return unique products sorted by price', () =
     expect(result).toEqual(expected);
 });
 
-import axios from 'axios';
-jest.mock('axios');
-import { fetchLongPosts } from '../work-with-api';
-
 test('fetchLongPosts should return posts longer than 100 characters', async () => {
     axios.get.mockResolvedValue({
         data: [
@@ -38,32 +78,24 @@ test('fetchLongPosts should return posts longer than 100 characters', async () =
     ]);
 });
 
-import mongoose from 'mongoose';
-jest.mock('mongoose', () => ({
-    model: jest.fn().mockReturnValue({
-        create: jest.fn(),
-        aggregate: jest.fn().mockResolvedValue([{ email: 'duplicate@example.com' }])
-    }),
-    connect: jest.fn()
-}));
-import { manageUsers } from '../work-with-mongodb';
-
 test('manageUsers should find users with duplicate emails', async () => {
     const result = await manageUsers();
     expect(result).toEqual([{ email: 'duplicate@example.com' }]);
 });
 
-import request from 'supertest';
-import app from '../users-api';
-
 test('POST /user and GET /users should work correctly', async () => {
-    await request(app).post('/user').send({ name: 'John' }).expect(200);
-    const response = await request(app).get('/users').expect(200);
+    await request(server).post('/user').send({ name: 'John' }).expect(200);
+
+    const response = await request(server).get('/users').expect(200);
 
     expect(response.body).toEqual([{ name: 'John' }]);
 });
 
-import { fetchAll } from '../asynchonus-development';
+test('POST /user should return 400 if no name is provided', async () => {
+    const response = await request(server).post('/user').send({}).expect(400);
+
+    expect(response.body).toEqual({ error: 'Name is required' });
+});
 
 test('fetchAll should fetch data from multiple URLs in parallel', async () => {
     axios.get.mockResolvedValueOnce({ data: 'Result 1', status: 200 });
@@ -78,13 +110,6 @@ test('fetchAll should fetch data from multiple URLs in parallel', async () => {
     ]);
 });
 
-jest.mock('redis', () => {
-    const redisMock = require('redis-mock');
-    return redisMock;
-});
-import { manageRedis } from '../work-with-redis';
-import redis from 'redis';
-
 test('manageRedis should save and retrieve keys', async () => {
     const mockRedisClient = redis.createClient();
 
@@ -95,4 +120,6 @@ test('manageRedis should save and retrieve keys', async () => {
 
     expect(mockRedisClient.set).toHaveBeenCalledWith('key', 'value', expect.any(Function));
     expect(mockRedisClient.get).toHaveBeenCalledWith('key', expect.any(Function));
+
+    mockRedisClient.quit();
 });
